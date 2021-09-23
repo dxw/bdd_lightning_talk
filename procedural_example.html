@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Procedural example</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/monokai-sublime.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/languages/ruby.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body>
+  <pre>
+    <code class="language-ruby" style="font-size: 1.5em;">
+      scenario "can create an adjustment for an activity" do
+        create(:report, :active, fund: activity.associated_fund, organisation: activity.organisation, financial_quarter: 1, financial_year: 2021)
+        visit organisation_activity_financials_path( organisation_id: activity.organisation.id, activity_id: activity.id)
+
+        click_on t("page_content.adjustment.button.create")
+        fill_in "adjustment_form[value]", with: "100.01"
+        select "Actual", from: "adjustment_form[adjustment_type]"
+        choose "2", name: "adjustment_form[financial_quarter]"
+        select "2021-2022", from: "adjustment_form[financial_year]"
+        fill_in "adjustment_form[comment]", with: "There was a typo in the original 'actual'"
+        click_on(t("default.button.submit"))
+
+        expect(page).to have_content(t("action.adjustment.create.success"))
+        adjustment = activity.adjustments.first
+        within ".adjustments" do
+          within "#adjustment_#{adjustment.id}" do
+            expect(page).to have_css(".financial-period", text: "FQ2 2021-2022")
+            expect(page).to have_css(".value", text: "£100.01")
+            expect(page).to have_css(".type", text: "Actual")
+            expect(page).to have_css(
+              ".report a[href='#{report_path(adjustment.report)}']",
+              text: "Report"
+            )
+          end
+        end
+      end
+    </code>
+  </pre>
+</body>
+</html>

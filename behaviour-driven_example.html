@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Behaviour-driven</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/monokai-sublime.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/languages/gherkin.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body>
+  <pre>
+    <code class="language-gherkin" style="font-size: 1.5em;">
+      Feature: Delivery partner creates an adjustment via a form
+        - So that BEIS can generate accurate reports for SID
+        - As a Delivery partner
+        - I want to adjust actual spends and refunds in historic periods in line with agreed   corrections
+
+        Background:
+          Given an active report exists
+          And I am looking at the Activity -> Financials tab
+
+        Scenario: can create an adjustment for an activity
+          When I submit the new adjustment form correctly
+          Then I expect to see the new adjustment
+          And the adjustment should not appear in the list of actuals
+          And I can drill down to the details of the adjustment
+          And I can navigate back to the associated activity or report
+
+        Scenario must supply the required information to create an adjustment
+          When I submit the new adjustment form incorrectly
+          Then I expect to see how I need to correct the form
+
+    </code>
+  </pre>
+</body>
+</html>
